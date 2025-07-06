@@ -20,7 +20,7 @@ async def websocket_handler(websocket, path):
 
 @app.on_startup
 async def startup():
-    asyncio.create_task(websockets.serve(websocket_handler, "localhost", 8765))
+    await websockets.serve(websocket_handler, "localhost", 8765)
 
 @broker.subscriber("notification.desktop")
 async def handle_desktop_notification(message: dict):
