@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -14,7 +15,27 @@ async def lifespan(app: FastAPI):
     yield
     await broker.close()
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "http://localhost:3000",  # React development server
+    "http://localhost:3064",  # Electron development server
+    "http://localhost:8072",  # Backend itself
+    "file://",              # Electron app
+    "null"                  # Electron app when loaded from file system
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 
 # Dependency

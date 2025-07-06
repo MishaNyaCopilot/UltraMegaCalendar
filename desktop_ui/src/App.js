@@ -5,7 +5,7 @@ import EventList from './components/EventList';
 import UserConfigForm from './components/UserConfigForm';
 import './App.css';
 
-const API_URL = 'http://localhost:8000'; // Your FastAPI backend URL
+const API_URL = 'http://localhost:8072'; // Your FastAPI backend URL
 const USER_ID = 1; // Assuming a single user for now
 
 function App() {

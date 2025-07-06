@@ -11,16 +11,26 @@ app = FastStream(broker)
 
 connected_websockets = set()
 
-async def websocket_handler(websocket, path):
+async def websocket_handler(websocket, path=None):
+    print(f"WebSocket connected. Path: {path}")
     connected_websockets.add(websocket)
     try:
         await websocket.wait_closed()
     finally:
         connected_websockets.remove(websocket)
 
+_websocket_server = None
+
 @app.on_startup
 async def startup():
-    await websockets.serve(websocket_handler, "localhost", 8765)
+    global _websocket_server
+    _websocket_server = await websockets.serve(websocket_handler, "localhost", 8765)
+    asyncio.create_task(_websocket_server.wait_closed())
+    print("WebSocket server started.")
+
+
+
+
 
 @broker.subscriber("notification.desktop")
 async def handle_desktop_notification(message: dict):
