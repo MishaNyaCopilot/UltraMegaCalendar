@@ -19,12 +19,13 @@ telegram_app: Application | None = None
 async def startup():
     global telegram_app
     telegram_app = create_bot(settings.telegram_token)
-    asyncio.create_task(telegram_app.run_polling())
+    await telegram_app.initialize()
+    await telegram_app.start()
 
 @app.on_shutdown
 async def shutdown():
     if telegram_app:
-        await telegram_app.shutdown()
+        await telegram_app.stop()
 
 @broker.subscriber("notification.telegram")
 async def handle_telegram_notification(message: dict):
