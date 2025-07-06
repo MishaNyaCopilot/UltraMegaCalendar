@@ -4,12 +4,12 @@ This is a cool calendar application with desktop and Telegram notifications.
 
 ## Project Status
 
-The initial setup of the project is complete. The following components have been created:
+The core infrastructure and basic functionalities are in place. We have:
 
-*   **Backend:** A FastAPI application that will serve as the central API for the system. It includes database models for users, events, and reminders, as well as basic CRUD operations.
-*   **Telegram Notifier:** A Python application that uses the `python-telegram-bot` library to send notifications to a Telegram chat.
-*   **Desktop Notifier:** A Python application that uses `plyer` and `websockets` to send desktop notifications.
-*   **Desktop UI:** An Electron application built with React that will serve as the main user interface for the application.
+*   **Backend:** A FastAPI application with PostgreSQL integration for user configurations, events, and reminders. It now publishes delayed reminder messages to RabbitMQ using FastStream.
+*   **Telegram Notifier:** A Python application that consumes messages from RabbitMQ and sends notifications via Telegram. Basic bot commands are implemented.
+*   **Desktop Notifier:** A Python application that consumes messages from RabbitMQ and sends desktop notifications, also forwarding them to connected WebSocket clients.
+*   **Desktop UI:** An Electron application built with React, capable of connecting to the desktop notifier's WebSocket for real-time notifications.
 
 ## How to Run
 
@@ -33,19 +33,21 @@ To run the application, you will need to:
     *   Navigate to the `desktop_ui` directory.
     *   Run `npm run electron:start`.
 
-This will start all the services and the desktop application. You can then interact with the application through the desktop UI and the Telegram bot.
+Alternatively, you can use the `run.bat` script in the root directory to start all services simultaneously.
 
 ## Next Steps
 
+To complete the project, the following tasks need to be addressed:
+
 *   **Backend:**
-    *   Implement RabbitMQ integration for sending notifications.
-    *   Add logic for calculating reminder times.
     *   Implement the remaining CRUD operations for events and reminders.
+    *   Refine the reminder calculation logic to support various user preferences (e.g., different reminder intervals).
 *   **Telegram Notifier:**
-    *   Implement RabbitMQ consumer to receive notifications from the backend.
-    *   Add more bot commands for interacting with the backend (e.g., creating events, listing events).
+    *   Implement more comprehensive bot commands for interacting with the backend (e.g., creating, listing, updating, and deleting events).
+    *   Improve error handling and user feedback for bot interactions.
 *   **Desktop Notifier:**
-    *   Implement RabbitMQ consumer to receive notifications from the backend.
+    *   Enhance desktop notification features (e.g., custom sounds, actions).
 *   **Desktop UI:**
-    *   Implement functionality for creating, reading, updating, and deleting events.
-    *   Add a way for the user to configure their Telegram chat ID.
+    *   Implement a full-fledged user interface for creating, reading, updating, and deleting events.
+    *   Add a configuration section for users to set their Telegram chat ID and desktop device ID.
+    *   Improve the visual design and user experience.

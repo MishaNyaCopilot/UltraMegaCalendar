@@ -1,16 +1,35 @@
 import asyncio
 import websockets
+from faststream import FastStream
+from faststream.rabbit import RabbitBroker
+
 from .notifier import send_notification
+from .config import settings
 
-async def handler(websocket, path):
-    async for message in websocket:
-        send_notification("New Event", message)
+broker = RabbitBroker(settings.rabbitmq_url)
+app = FastStream(broker)
 
-def main():
-    start_server = websockets.serve(handler, "localhost", 8765)
+connected_websockets = set()
 
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+async def websocket_handler(websocket, path):
+    connected_websockets.add(websocket)
+    try:
+        await websocket.wait_closed()
+    finally:
+        connected_websockets.remove(websocket)
+
+@app.on_startup
+async def startup():
+    asyncio.create_task(websockets.serve(websocket_handler, "localhost", 8765))
+
+@broker.subscriber("notification.desktop")
+async def handle_desktop_notification(message: dict):
+    event_title = message.get("event_title")
+    if event_title:
+        send_notification("New Event", event_title)
+        # Also send to connected WebSocket clients
+        for websocket in connected_websockets:
+            await websocket.send(f"New Event: {event_title}")
 
 if __name__ == "__main__":
-    main()
+    app.run()
