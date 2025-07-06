@@ -47,7 +47,9 @@ async def create_event(db: Session, event: schemas.EventCreate, user_id: int):
     db.refresh(db_event)
 
     # Calculate reminder time (e.g., 5 minutes before the event)
-    remind_at = event.start_time - timedelta(minutes=5)
+    user_config = get_user_config(db, user_id)
+    reminder_minutes_before = user_config.default_reminder_minutes_before if user_config else 15
+    remind_at = event.start_time - timedelta(minutes=reminder_minutes_before)
     delay_ms = int((remind_at - datetime.now()).total_seconds() * 1000)
 
     # Get user config to send notifications
@@ -98,3 +100,32 @@ def delete_event(db: Session, event_id: int):
         db.delete(db_event)
         db.commit()
     return db_event
+
+def get_reminders(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Reminder).offset(skip).limit(limit).all()
+
+def get_reminder(db: Session, reminder_id: int):
+    return db.query(models.Reminder).filter(models.Reminder.id == reminder_id).first()
+
+def create_reminder(db: Session, reminder: schemas.ReminderCreate, event_id: int):
+    db_reminder = models.Reminder(**reminder.dict(), event_id=event_id)
+    db.add(db_reminder)
+    db.commit()
+    db.refresh(db_reminder)
+    return db_reminder
+
+def update_reminder(db: Session, reminder_id: int, reminder: schemas.ReminderCreate):
+    db_reminder = db.query(models.Reminder).filter(models.Reminder.id == reminder_id).first()
+    if db_reminder:
+        for key, value in reminder.dict(exclude_unset=True).items():
+            setattr(db_reminder, key, value)
+        db.commit()
+        db.refresh(db_reminder)
+    return db_reminder
+
+def delete_reminder(db: Session, reminder_id: int):
+    db_reminder = db.query(models.Reminder).filter(models.Reminder.id == reminder_id).first()
+    if db_reminder:
+        db.delete(db_reminder)
+        db.commit()
+    return db_reminder

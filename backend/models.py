@@ -8,6 +8,7 @@ class UserConfig(Base):
     id = Column(Integer, primary_key=True, index=True)
     telegram_chat_id = Column(String, nullable=True)
     desktop_device_id = Column(String, nullable=True)
+    default_reminder_minutes_before = Column(Integer, default=15)
 
 class Event(Base):
     __tablename__ = "events"

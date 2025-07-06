@@ -38,6 +38,7 @@ class Event(EventBase):
 class UserConfigBase(BaseModel):
     telegram_chat_id: str | None = None
     desktop_device_id: str | None = None
+    default_reminder_minutes_before: int = 15
 
 class UserConfigCreate(UserConfigBase):
     pass
