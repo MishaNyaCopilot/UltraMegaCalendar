@@ -1,4 +1,7 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Settings(BaseSettings):
     telegram_token: str
@@ -6,6 +9,6 @@ class Settings(BaseSettings):
     backend_url: str = "http://localhost:8000"
 
     class Config:
-        env_file = ".env"
+        env_file = "telegram_notifier/.env"
 
 settings = Settings()

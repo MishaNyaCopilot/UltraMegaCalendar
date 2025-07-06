@@ -32,4 +32,4 @@ async def handle_desktop_notification(message: dict):
             await websocket.send(f"New Event: {event_title}")
 
 if __name__ == "__main__":
-    app.run()
+    asyncio.run(app.run())

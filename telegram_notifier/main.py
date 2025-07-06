@@ -35,4 +35,4 @@ async def handle_telegram_notification(message: dict):
             await telegram_app.bot.send_message(chat_id=chat_id, text=f"Reminder: {event_title}")
 
 if __name__ == "__main__":
-    app.run()
+    asyncio.run(app.run())

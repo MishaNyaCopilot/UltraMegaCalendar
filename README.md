@@ -17,7 +17,7 @@ To run the application, you will need to:
 
 1.  **Start the backend server:**
     *   Navigate to the `backend` directory.
-    *   Make sure you have a PostgreSQL server running and have updated the `.env` file with the correct connection string.
+    *   Make sure you have a PostgreSQL server running and have created a database named `coolcalendar` (or whatever you've configured in `backend/.env`).
     *   Run `uvicorn main:app --reload`.
 
 2.  **Start the Telegram notifier:**

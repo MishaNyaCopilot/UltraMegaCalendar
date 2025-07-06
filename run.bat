@@ -3,7 +3,7 @@
 echo Starting UltraMegaCalendar...
 
 REM Start Backend
-start "Backend" cmd /c "cd backend && uvicorn main:app --reload"
+start "Backend" cmd /c "cd backend && uvicorn main:app --reload --port 8072"
 
 REM Start Telegram Notifier
 start "Telegram Notifier" cmd /c "cd telegram_notifier && python main.py"
